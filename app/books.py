@@ -1,5 +1,6 @@
 from .data import books
 
+
 def add_book(title, author, isbn):
     book = {
         "id": len(books) + 1,
@@ -9,8 +10,9 @@ def add_book(title, author, isbn):
         "available": True,
     }
 
-    book.append(book)
+    books.append(book)
     return book
+
 
 def get_books():
     return books
@@ -22,6 +24,7 @@ def find_book(book_id):
             return book
     return None
 
+
 def delete_book(book_id):
     book = find_book(book_id)
     if book is None:
@@ -29,6 +32,7 @@ def delete_book(book_id):
 
     books.remove(book)
     return True
+
 
 def calculate_available_books():
     return sum(book["available"] for book in books)

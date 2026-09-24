@@ -12,11 +12,15 @@ from app.books import (
 )
 
 from app.members import add_member, get_members, find_member
-from app.loan import borrow_book, return_book, get_loans
+from app.loan import borrow_book, count_active_loans, return_book, get_loans
 
 # App initialization
 app = FastAPI(
     title="Library Management System",
+    description="Backend API for Managing books, members and borroring.",
+    version="1.0.0",
+    docs_url="/",
+    redoc_url="/redoc",
 )
 
 
@@ -42,14 +46,15 @@ def get_statistics():
         "available_books": calculate_available_books(),
         "borrowed_books": count_borrowed_books(),
         "total_members": len(get_members()),
+        "active_loans": count_active_loans(),
         "total_loans": len(get_loans()),
     }
 
 
 # Book Routing
-@app.get("/")
-def home():
-    return {"message": "Welcome to the Library Management System!"}
+# @app.get("/")
+# def home():
+#     return {"message": "Welcome to the Library Management System!"}
 
 
 @app.get("/books")
@@ -59,7 +64,12 @@ def books():
 
 @app.post("/books")
 def create_book(book: BookCreate):
-    return add_book(book.title, book.author, book.year)
+    return add_book(book.title, book.author, book.isbn)
+
+
+@app.get("/books/search")
+def search(query: str):
+    return search_books(query)
 
 
 @app.get("/books/{book_id}")
@@ -76,11 +86,6 @@ def remove_book(book_id: int):
     if not delete_book(book_id):
         raise HTTPException(status_code=404, detail="Book not found")
     return {"message": "Book deleted successfully"}
-
-
-@app.get("/books/search")
-def search(query: str):
-    return search_books(query)
 
 
 # Member Routing
